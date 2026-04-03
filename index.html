@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Viaje Sudeste Pollos | Itinerario Familiar</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Unicons -->
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.8/css/line.css">
+
+    <style>
+        :root {
+            /* Color Palette */
+            --deep-blue: #0A1C2E;
+            --turquoise: #38B2AC;
+            --sand-beige: #F9F6F0;
+            --soft-beige: #F1ECE1;
+            --tropical-green: #2A5A41;
+            --white: #FFFFFF;
+            --gray-text: #5A6B7C;
+            
+            /* Glassmorphism */
+            --glass-bg-light: rgba(255, 255, 255, 0.85);
+            --glass-bg-dark: rgba(10, 28, 46, 0.8);
+            --glass-border: rgba(255, 255, 255, 0.3);
+            --shadow-premium: 0 10px 40px -10px rgba(10, 28, 46, 0.15);
+
+            /* Typography */
+            --font-title: 'Playfair Display', serif;
+            --font-text: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-text);
+            background-color: var(--sand-beige);
+            color: var(--deep-blue);
+            overflow-x: hidden;
+            /* Hide scrollbar for a seamless presentation look */
+            -ms-overflow-style: none;  
+            scrollbar-width: none;  
+        }
+        body::-webkit-scrollbar { 
+            display: none; 
+        }
+
+        /* Presentation Container - Horizontal Scroll */
+        .deck-container {
+            display: flex;
+            width: 100vw;
+            height: 100vh;
+            overflow-x: auto;
+            overflow-y: hidden;
+            scroll-snap-type: x mandatory;
+            scroll-behavior: smooth;
+        }
+
+        .slide {
+            flex: 0 0 100vw;
+            width: 100vw;
+            height: 100vh;
+            scroll-snap-align: start;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 4rem;
+            overflow: hidden;
+        }
+
+        /* Ambient / Background Images */
+        .bg-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -2;
+            filter: brightness(0.85);
+            transition: transform 10s ease;
+        }
+
+        .slide:hover .bg-image {
+            transform: scale(1.03);
+        }
+
+        .bg-overlay-dark {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to right, rgba(10, 28, 46, 0.8) 0%, rgba(10, 28, 46, 0.4) 100%);
+            z-index: -1;
+        }
+
+        .bg-overlay-sand {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(249, 246, 240, 0.95);
+            z-index: -1;
+        }
+
+        /* Navigation Controls */
+        .nav-controls {
+            position: fixed;
+            bottom: 2rem;
+            right: 3rem;
+            display: flex;
+            gap: 1rem;
+            z-index: 100;
+        }
+        
+        .nav-btn {
+            background: var(--glass-bg-light);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--white);
+            color: var(--deep-blue);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: var(--shadow-premium);
+            transition: all 0.3s ease;
+        }
+
+        .nav-btn:hover {
+            background: var(--turquoise);
+            color: var(--white);
+            border-color: var(--turquoise);
+            transform: translateY(-3px);
+        }
+
+        /* Slide Content Box (Glassmorphism) */
+        .content-box {
+            background: var(--glass-bg-light);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 3rem;
+            width: 100%;
+            max-width: 1100px;
+            box-shadow: var(--shadow-premium);
+            position: relative;
+            transform: translateY(30px);
+            opacity: 0;
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .slide.active .content-box {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .content-box.dark {
+            background: var(--glass-bg-dark);
+            color: var(--white);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Typography Styles */
+        h1, h2, h3 {
+            font-family: var(--font-title);
+        }
+
+        .title-hero {
+            font-size: 5.5rem;
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 1rem;
+            color: var(--white);
+        }
+
+        .subtitle-hero {
+            font-family: var(--font-text);
+            font-size: 1.4rem;
+            font-weight: 300;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--sand-beige);
+            margin-bottom: 2rem;
+            border-left: 3px solid var(--turquoise);
+            padding-left: 1rem;
+        }
+
+        h2.section-title {
+            font-size: 3.5rem;
+            color: var(--deep-blue);
+            margin-bottom: 0.5rem;
+        }
+        .content-box.dark h2.section-title {
+            color: var(--white);
+        }
+
+        .dates-badge {
+            display: inline-block;
+            background: var(--tropical-green);
+            color: var(--white);
+            padding: 0.4rem 1.2rem;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 2rem;
+        }
+
+        .nights-badge {
+            position: absolute;
+            top: 3rem;
+            right: 3rem;
+            background: var(--turquoise);
+            color: var(--deep-blue);
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.8rem;
+            box-shadow: 0 8px 20px rgba(56, 178, 172, 0.4);
+            line-height: 1;
+        }
+        .nights-badge span {
+            font-size: 0.75rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-top: 2px;
+        }
+
+        /* Layout Grids */
+        .grid-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        /* Cards & Info Blocks */
+        .info-card {
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 16px;
+            padding: 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            transition: all 0.3s ease;
+        }
+        .content-box.dark .info-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+        .info-card:hover {
+            transform: translateY(-5px);
+            background: var(--white);
+            box-shadow: var(--shadow-premium);
+        }
+        .content-box.dark .info-card:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .info-card h4 {
+            font-family: var(--font-title);
+            font-size: 1.4rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--deep-blue);
+        }
+        .content-box.dark .info-card h4 { color: var(--white); }
+
+        .info-card h4 i {
+            color: var(--turquoise);
+            font-size: 1.5rem;
+        }
+
+        .plan-list {
+            list-style: none;
+        }
+        .plan-list li {
+            margin-bottom: 0.8rem;
+            padding-left: 1.5rem;
+            position: relative;
+            line-height: 1.5;
+            color: var(--gray-text);
+        }
+        .content-box.dark .plan-list li { color: rgba(255, 255, 255, 0.8); }
+
+        .plan-list li::before {
+            content: '•';
+            color: var(--tropical-green);
+            position: absolute;
+            left: 0;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+        
+        .plan-list li strong {
+            color: var(--deep-blue);
+            font-weight: 600;
+        }
+        .content-box.dark .plan-list li strong { color: var(--white); }
+
+        /* Sub-items in plan list */
+        .plan-list li ul {
+            list-style: none;
+            margin-top: 0.3rem;
+            margin-left: 0.5rem;
+        }
+        .plan-list li ul li {
+            margin-bottom: 0.3rem;
+            font-size: 0.95rem;
+        }
+        .plan-list li ul li::before {
+            content: '∘';
+            color: var(--turquoise);
+        }
+
+        /* Map Slide specific */
+        .map-container {
+            width: 100%;
+            height: 60vh;
+            border-radius: 20px;
+            overflow: hidden;
+            position: relative;
+            background: var(--soft-beige);
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.05);
+        }
+        .map-img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            padding: 1rem;
+        }
+        .map-route-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        .map-route-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+        .map-route-item span {
+            background: var(--turquoise);
+            color: var(--deep-blue);
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.9rem;
+        }
+        .arrow-down {
+            color: var(--tropical-green);
+            margin-left: 0.8rem;
+        }
+
+        /* Divider */
+        .divider {
+            height: 1px;
+            background: rgba(10, 28, 46, 0.1);
+            margin: 1.5rem 0;
+        }
+        .content-box.dark .divider { background: rgba(255, 255, 255, 0.1); }
+
+        /* Tags */
+        .tip-tag {
+            display: inline-block;
+            background: rgba(42, 90, 65, 0.1);
+            color: var(--tropical-green);
+            padding: 0.3rem 0.8rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-top: 0.5rem;
+            margin-right: 0.5rem;
+            border: 1px solid rgba(42, 90, 65, 0.2);
+        }
+        .content-box.dark .tip-tag {
+            background: rgba(56, 178, 172, 0.15);
+            color: var(--turquoise);
+            border-color: rgba(56, 178, 172, 0.3);
+        }
+
+        /* Phuket Highlight Slide */
+        .highlight-slide .content-box {
+            border: 2px solid var(--turquoise);
+            box-shadow: 0 0 50px rgba(56, 178, 172, 0.3);
+        }
+        .pulse {
+            animation: pulse-animation 2s infinite;
+        }
+        @keyframes pulse-animation {
+            0% { box-shadow: 0 0 0 0 rgba(56, 178, 172, 0.7); }
+            70% { box-shadow: 0 0 0 15px rgba(56, 178, 172, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(56, 178, 172, 0); }
+        }
+
+        /* Final Summary Table/Grid */
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin: 3rem 0;
+        }
+        .summary-card {
+            text-align: center;
+            padding: 1.5rem;
+            background: var(--white);
+            border-radius: 16px;
+            border: 1px solid var(--soft-beige);
+        }
+        .summary-card h5 {
+            font-size: 1.2rem;
+            color: var(--deep-blue);
+            margin-bottom: 0.5rem;
+            font-family: var(--font-title);
+        }
+        .summary-card p {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--turquoise);
+        }
+
+        .grand-total {
+            text-align: center;
+            font-size: 2.5rem;
+            font-family: var(--font-title);
+            color: var(--tropical-green);
+            margin-top: 2rem;
+            font-weight: 600;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Controles de navegación fijos -->
+    <div class="nav-controls">
+        <button class="nav-btn" onclick="prevSlide()"><i class="uil uil-angle-left-b"></i></button>
+        <button class="nav-btn" onclick="nextSlide()"><i class="uil uil-angle-right-b"></i></button>
+    </div>
+
+    <!-- Contenedor Principal (Horizontal Scroll) -->
+    <div class="deck-container" id="deck">
+
+        <!-- DIAPOSITIVA 1: PORTADA -->
+        <section class="slide active">
+            <img src="https://images.unsplash.com/photo-1544200701-d7af0bdec7c7?auto=format&fit=crop&w=2000&q=80" alt="Playa Tropical" class="bg-image">
+            <div class="bg-overlay-dark"></div>
+            
+            <div class="content-box dark" style="background: transparent; border: none; box-shadow: none; text-align: center;">
+                <div class="subtitle-hero" style="border: none; padding: 0;">Itinerario Familiar por el Sudeste Asiático</div>
+                <h1 class="title-hero">Viaje Sudeste Pollos</h1>
+                <div class="dates-badge" style="font-size: 1.2rem; padding: 0.6rem 2rem; margin-top: 2rem; background: var(--turquoise); color: var(--deep-blue);">
+                    21 de junio – 13 de julio
+                </div>
+            </div>
+        </section>
+
+        <!-- DIAPOSITIVA 2: MAPA GENERAL -->
+        <section class="slide">
+            <div class="bg-overlay-sand"></div>
+            
+            <div class="content-box">
+                <h2 class="section-title">El Recorrido Master</h2>
+                <div class="dates-badge">Plan Estratégico</div>
+                
+                <div class="grid-layout">
+                    <div class="map-container">
+                        <!-- Imagen local proporcionada -->
+                        <img src="mapa Sudeste.png" alt="Mapa del Sudeste" class="map-img" onerror="this.src='https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&w=1000&q=80'">
+                    </div>
+                    
+                    <div class="map-info">
+                        <p style="font-size: 1.1rem; color: var(--gray-text); margin-bottom: 2rem;">
+                            Un trayecto diseñado paso a paso para fluir con tranquilidad, equilibrando aventura, cultura y el descanso en familia. Múltiples destinos optimizados.
+                        </p>
+                        
+                        <div class="map-route-list">
+                            <div class="map-route-item"><span>4</span> Bangkok <i class="uil uil-plane arrow-down"></i></div>
+                            <div class="map-route-item"><span>2</span> Chiang Rai <i class="uil uil-plane arrow-down"></i></div>
+                            <div class="map-route-item"><span>4</span> Phuket <i class="uil uil-plane-arrival arrow-down" style="transform: rotate(45deg);"></i></div>
+                            <div class="map-route-item"><span>3</span> Krabi <i class="uil uil-ship arrow-down"></i></div>
+                            <div class="map-route-item"><span>6</span> Bali <i class="uil uil-plane arrow-down"></i></div>
+                            <div class="map-route-item"><span>2</span> Bangkok Final</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- DIAPOSITIVA 3: BANGKOK -->
+        <section class="slide">
+            <img src="https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?auto=format&fit=crop&w=2000&q=80" alt="Bangkok" class="bg-image">
+            <div class="bg-overlay-dark"></div>
+            
+            <div class="content-box dark">
+                <div class="nights-badge">4<span>Noches</span></div>
+                <h2 class="section-title">Bangkok</h2>
+                <div class="dates-badge">21 – 25 Junio</div>
+
+                <div class="grid-3">
+                    <div class="info-card">
+                        <h4><i class="uil uil-map-marker-alt"></i> El Plan</h4>
+                        <ul class="plan-list">
+                            <li><strong>21:</strong> Llegada → hotel → descanso</li>
+                            <li><strong>22:</strong> Adaptación → piscina + mall</li>
+                            <li><strong>23:</strong> Templos
+                                <ul>
+                                    <li>Gran Palacio</li>
+                                    <li>Wat Pho</li>
+                                    <li>Buda de Oro</li>
+                                </ul>
+                            </li>
+                            <li><strong>24:</strong> Mercado flotante + paseo río</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="info-card">
+                        <h4><i class="uil uil-building"></i> Dónde Alojar</h4>
+                        <ul class="plan-list">
+                            <li><strong>Zona:</strong> Riverside (mejor para familia)</li>
+                            <li>Anantara Riverside</li>
+                            <li>Shangri-La</li>
+                        </ul>
+                        <div class="divider"></div>
+                        <h4><i class="uil uil-utensils"></i> Dónde Comer</h4>
+                        <ul class="plan-list">
+                            <li>IconSiam</li>
+                            <li>Blue Elephant</li>
+                        </ul>
+                    </div>
+
+                    <div class="info-card">
+                        <h4><i class="uil uil-lightbulb-alt"></i> Tips Relevantes</h4>
+                        <div style="margin-top: 1rem;">
+                            <span class="tip-tag">Salir temprano (calor fuerte)</span>
+                            <span class="tip-tag">Tardes indoor</span>
+                            <span class="tip-tag">Mucha hidratación</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- DIAPOSITIVA 4: CHIANG RAI -->
+        <section class="slide">
+            <img src="https://images.unsplash.com/photo-1594917415285-ccfb8cd0c07d?auto=format&fit=crop&w=2000&q=80" alt="Chiang Rai" class="bg-image">
+            <div class="bg-overlay-dark"></div>
+            
+            <div class="content-box dark">
+                <div class="nights-badge" style="background: var(--tropical-green); color: white;">2<span>Noches</span></div>
+                <h2 class="section-title">Chiang Rai</h2>
+                <div class="dates-badge" style="background: transparent; border: 1px solid white;">25 – 27 Junio</div>
+
+                <div class="grid-3">
+                    <div class="info-card">
+                        <h4><i class="uil uil-plane-departure"></i> El Plan</h4>
+                        <ul class="plan-list">
+                            <li>Vuelo BKK → Chiang Rai (14:35)</li>
+                            <li><strong>25:</strong> Llegada → hotel → descanso</li>
+                            <li><strong>26:</strong> Día templos
+                                <ul>
+                                    <li>White Temple</li>
+                                    <li>Blue Temple</li>
+                                    <li>Black House</li>
+                                </ul>
+                            </li>
+                            <li><strong>27:</strong> Salida a próximo destino</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="info-card">
+                        <h4><i class="uil uil-building"></i> Hoteles Sugeridos</h4>
+                        <ul class="plan-list">
+                            <li>Le Méridien</li>
+                            <li>The Riverie</li>
+                        </ul>
+                        <div class="divider"></div>
+                        <h4><i class="uil uil-utensils"></i> Lugar para Comer</h4>
+                        <ul class="plan-list">
+                            <li>Chivit Thamma Da</li>
+                        </ul>
+                    </div>
+
+                    <div class="info-card">
+                        <h4><i class="uil uil-lightbulb-alt"></i> Consideraciones</h4>
+                        <div style="margin-top: 1rem;">
+                            <span class="tip-tag">Todo en medio día</span>
+                            <span class="tip-tag">Tarde libre de descanso</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- DIAPOSITIVA 5: PHUKET (HIGHLIGHT) -->
+        <section class="slide highlight-slide">
+            <img src="https://images.unsplash.com/photo-1582987118944-ff73df7f8469?auto=format&fit=crop&w=2000&q=80" alt="Phuket" class="bg-image">
+            <div class="bg-overlay-dark" style="background: linear-gradient(to right, rgba(10, 28, 46, 0.9) 0%, rgba(10, 28, 46, 0.6) 100%);"></div>
+            
+            <div class="content-box dark">
+                <div class="nights-badge pulse">4<span>Noches</span></div>
+                <div class="dates-badge" style="background: linear-gradient(45deg, var(--turquoise), #2b6cb0);">Momento Cumbre del Viaje</div>
+                <h2 class="section-title" style="color: var(--turquoise);">Phuket</h2>
+                <div class="dates-badge" style="background: transparent; border: none; padding: 0; font-size: 1.1rem; letter-spacing: 0;">27 Junio – 1 Julio</div>
+
+                <div class="grid-3">
+                    <div class="info-card" style="background: rgba(56, 178, 172, 0.1); border-color: rgba(56, 178, 172, 0.4);">
+                        <h4><i class="uil uil-sun"></i> El Plan Diario</h4>
+                        <ul class="plan-list">
+                            <li><strong>27:</strong> Llegada → hotel → descanso</li>
+                            <li><strong>28:</strong> Tour Premium a Phi Phi Islands</li>
+                            <li><strong>29:</strong> Santuario de elefantes
+                                <ul>
+                                    <li>Elephant Jungle Sanctuary</li>
+                                    <li>Interacción ética (mañana)</li>
+                                    <li>Tarde: Piscina + masaje</li>
+                                </ul>
+                            </li>
+                            <li><strong>30:</strong> Día libre (Playa, descanso)</li>
+                            <li><strong>1 Jul:</strong> Salida a Krabi</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="info-card">
+                        <h4><i class="uil uil-building"></i> Dónde Alojar</h4>
+                        <ul class="plan-list">
+                            <li><strong>Zonas:</strong> Kata / Kamala</li>
+                            <li><strong style="color: #ef4444;">NO Patong</strong></li>
+                            <li>Katathani Beach Resort</li>
+                            <li>Rosewood</li>
+                        </ul>
+                        <div class="divider" style="background: rgba(255,255,255,0.2);"></div>
+                        <h4><i class="uil uil-utensils"></i> Dónde Comer</h4>
+                        <ul class="plan-list">
+                            <li>The Boathouse</li>
+                            <li>Restaurantes del hotel</li>
+                        </ul>
+                    </div>
+
+                    <div class="info-card">
+                        <h4><i class="uil uil-star"></i> Tips Especiales</h4>
+                        <div style="margin-top: 1rem;">
+                            <span class="tip-tag" style="background: var(--turquoise); color: var(--deep-blue);">Tour Phi Phi premium</span>
+                            <span class="tip-tag">No sobrecargar</span>
+                            <span class="tip-tag">Desconexión familiar</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- DIAPOSITIVA 6: KRABI -->
+        <section class="slide">
+            <img src="https://images.unsplash.com/photo-1498654200940-5e6833fe28ab?auto=format&fit=crop&w=2000&q=80" alt="Krabi" class="bg-image">
+            <div class="bg-overlay-sand" style="background: rgba(249, 246, 240, 0.85);"></div>
+            
+            <div class="content-box">
+                <div class="nights-badge">3<span>Noches</span></div>
+                <h2 class="section-title">Krabi</h2>
+                <div class="dates-badge">1 – 4 Julio</div>
+
+                <div class="grid-3">
+                    <div class="info-card">
+                        <h4><i class="uil uil-ship"></i> El Plan</h4>
+                        <ul class="plan-list">
+                            <li><strong>1:</strong> Llegada desde Phuket</li>
+                            <li><strong>2:</strong> Railay Beach</li>
+                            <li><strong>3:</strong> Día libre (Relax absoluto)</li>
+                            <li><strong>4:</strong> Salida al próximo destino</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="info-card">
+                        <h4><i class="uil uil-building"></i> Hoteles Sugeridos</h4>
+                        <ul class="plan-list">
+                            <li>Rayavadee</li>
+                            <li>Sofitel Krabi</li>
+                        </ul>
+                        <div class="divider"></div>
+                        <h4><i class="uil uil-utensils"></i> Dónde Comer</h4>
+                        <ul class="plan-list">
+                            <li>Lae Lay Grill</li>
+                        </ul>
+                    </div>
+
+                    <div class="info-card">
+                        <h4><i class="uil uil-bed-double"></i> Enfoque del Destino</h4>
+                        <div style="margin-top: 1rem;">
+                            <span class="tip-tag">Ritmo tranquilo</span>
+                            <span class="tip-tag">Ideal para descanso puro</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- DIAPOSITIVA 7: BALI -->
+        <section class="slide">
+            <img src="https://images.unsplash.com/photo-1555400038-63f5ba517a47?auto=format&fit=crop&w=2000&q=80" alt="Bali" class="bg-image">
+            <div class="bg-overlay-dark"></div>
+            
+            <div class="content-box dark" style="max-width: 1200px;">
+                <div class="nights-badge" style="background: var(--tropical-green); color: white;">6<span>Noches Totales</span></div>
+                <h2 class="section-title">Bali</h2>
+                <div class="dates-badge" style="background: transparent; border: 1px solid white;">4 – 10 Julio</div>
+
+                <div class="grid-layout" style="gap: 2rem;">
+                    <!-- Bloque Ubud -->
+                    <div class="info-card" style="border: 1px solid rgba(56, 178, 172, 0.4);">
+                        <h3 style="font-size: 1.8rem; color: var(--turquoise); margin-bottom: 1rem;">Ubud | Cultural & Verde</h3>
+                        <p style="color: rgba(255,255,255,0.7); margin-bottom: 1rem; font-size: 0.9rem;">4 – 7 Julio (3 noches)</p>
+                        
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                            <div>
+                                <h4 style="font-size: 1.1rem;"><i class="uil uil-trees"></i> Plan</h4>
+                                <ul class="plan-list" style="font-size: 0.9rem;">
+                                    <li>Arrozales</li>
+                                    <li>Paseos suaves</li>
+                                    <li>Spa</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h4 style="font-size: 1.1rem;"><i class="uil uil-building"></i> Hoteles</h4>
+                                <ul class="plan-list" style="font-size: 0.9rem;">
+                                    <li>Four Seasons Sayan</li>
+                                    <li>Maya Ubud</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bloque Playa -->
+                    <div class="info-card" style="border: 1px solid rgba(255, 255, 255, 0.2);">
+                        <h3 style="font-size: 1.8rem; color: var(--white); margin-bottom: 1rem;">Nusa Dua | Playa Familia</h3>
+                        <p style="color: rgba(255,255,255,0.7); margin-bottom: 1rem; font-size: 0.9rem;">7 – 10 Julio (3 noches)</p>
+                        
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                            <div>
+                                <h4 style="font-size: 1.1rem;"><i class="uil uil-swimmer"></i> Plan</h4>
+                                <ul class="plan-list" style="font-size: 0.9rem;">
+                                    <li>Playa</li>
+                                    <li>Piscina</li>
+                                    <li>Hotel</li>
+                                </ul>
+                                <h4 style="font-size: 1.1rem; margin-top: 1rem;"><i class="uil uil-utensils"></i> Comer</h4>
+                                <ul class="plan-list" style="font-size: 0.9rem;">
+                                    <li>En el hotel</li>
+                                    <li>Bebek Tepi Sawah</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h4 style="font-size: 1.1rem;"><i class="uil uil-building"></i> Hoteles</h4>
+                                <ul class="plan-list" style="font-size: 0.9rem;">
+                                    <li>Grand Hyatt</li>
+                                    <li>Westin</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="text-align: center; margin-top: 2rem;">
+                    <span class="tip-tag" style="background: var(--turquoise); color: var(--deep-blue); font-size: 1rem;">Bali = Relajo</span>
+                    <span class="tip-tag" style="font-size: 1rem;">No sobreplanificar</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- DIAPOSITIVA 8: BANGKOK FINAL -->
+        <section class="slide">
+            <img src="https://images.unsplash.com/photo-1542407671-872f2a74c10a?auto=format&fit=crop&w=2000&q=80" alt="Bangkok Noche" class="bg-image">
+            <div class="bg-overlay-sand" style="background: rgba(249, 246, 240, 0.9);"></div>
+            
+            <div class="content-box">
+                <div class="nights-badge">2<span>Noches</span></div>
+                <h2 class="section-title">Bangkok Final</h2>
+                <div class="dates-badge">11 – 13 Julio</div>
+
+                <div class="grid-3">
+                    <div class="info-card">
+                        <h4><i class="uil uil-plane-arrival"></i> El Plan de Cierre</h4>
+                        <ul class="plan-list">
+                            <li><strong>11:</strong> Llegada desde Bali</li>
+                            <li><strong>12:</strong> Compras + descanso final</li>
+                            <li><strong>13:</strong> Vuelo de retorno a casa</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="info-card">
+                        <h4><i class="uil uil-building"></i> Dónde Alojar</h4>
+                        <ul class="plan-list">
+                            <li>Repetir zona Riverside</li>
+                            <li>Ideal para logística de salida</li>
+                        </ul>
+                        <div class="divider"></div>
+                        <h4><i class="uil uil-shopping-bag"></i> Dónde Comer & Shopping</h4>
+                        <ul class="plan-list">
+                            <li>IconSiam</li>
+                            <li>Siam Paragon</li>
+                        </ul>
+                    </div>
+
+                    <div class="info-card" style="display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(56, 178, 172, 0.1);">
+                        <div>
+                            <i class="uil uil-smile" style="font-size: 3rem; color: var(--tropical-green);"></i>
+                            <h4 style="justify-content: center; margin-top: 1rem; color: var(--deep-blue);">Despedida Cómoda</h4>
+                            <p style="color: var(--gray-text); font-size: 0.95rem; margin-top: 0.5rem;">Cierre de viaje, enfoque en comodidad y últimas compras antes del vuelo.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- DIAPOSITIVA 9: RESUMEN FINAL -->
+        <section class="slide">
+            <img src="https://images.unsplash.com/photo-1505993597083-3cb43160a2b9?auto=format&fit=crop&w=2000&q=80" alt="Resumen" class="bg-image">
+            <div class="bg-overlay-dark"></div>
+            
+            <div class="content-box dark" style="text-align: center; max-width: 900px;">
+                <h2 class="section-title" style="font-size: 3rem; margin-bottom: 0;">Resumen del Viaje</h2>
+                <div class="subtitle-hero" style="border: none; margin-bottom: 0; margin-top: 1rem;">La distribución perfecta</div>
+
+                <div class="summary-grid">
+                    <div class="summary-card">
+                        <h5>Bangkok</h5>
+                        <p>4 Noches</p>
+                    </div>
+                    <div class="summary-card">
+                        <h5>Chiang Rai</h5>
+                        <p>2 Noches</p>
+                    </div>
+                    <div class="summary-card">
+                        <h5>Phuket</h5>
+                        <p>4 Noches</p>
+                    </div>
+                    <div class="summary-card">
+                        <h5>Krabi</h5>
+                        <p>3 Noches</p>
+                    </div>
+                    <div class="summary-card" style="border: 2px solid var(--turquoise);">
+                        <h5>Bali</h5>
+                        <p>6 Noches</p>
+                    </div>
+                    <div class="summary-card">
+                        <h5>Bangkok Final</h5>
+                        <p>2 Noches</p>
+                    </div>
+                </div>
+
+                <h3 class="grand-total">22 días perfectamente equilibrados</h3>
+                <p style="color: rgba(255,255,255,0.7); margin-top: 1rem; font-family: var(--font-text);">Una experiencia familiar inolvidable en el sudeste asiático.</p>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- Script para navegación con botones y keyboard -->
+    <script>
+        const deck = document.getElementById('deck');
+        const slides = document.querySelectorAll('.slide');
+        let currentSlide = 0;
+
+        function updateActiveSlide() {
+            slides.forEach((slide, index) => {
+                if (index === currentSlide) {
+                    slide.classList.add('active');
+                } else {
+                    slide.classList.remove('active');
+                }
+            });
+        }
+
+        // Navegación con botones
+        function nextSlide() {
+            if (currentSlide < slides.length - 1) {
+                currentSlide++;
+                slides[currentSlide].scrollIntoView({ behavior: 'smooth' });
+                updateActiveSlide();
+            }
+        }
+
+        function prevSlide() {
+            if (currentSlide > 0) {
+                currentSlide--;
+                slides[currentSlide].scrollIntoView({ behavior: 'smooth' });
+                updateActiveSlide();
+            }
+        }
+
+        // Navegación interactiva (observer)
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const index = Array.from(slides).indexOf(entry.target);
+                    currentSlide = index;
+                    updateActiveSlide();
+                }
+            });
+        }, {
+            root: deck,
+            threshold: 0.6 // Dispara cuando el 60% del slide es visible
+        });
+
+        slides.forEach(slide => observer.observe(slide));
+
+        // Keyboard Navigation (Flechas izquierda / derecha)
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') {
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                prevSlide();
+            }
+        });
+
+        // Initialize first slide as active
+        updateActiveSlide();
+    </script>
+</body>
+</html>
