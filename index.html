@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Viaje Sudeste Pollos | Itinerario Familiar</title>
     
     <!-- Google Fonts -->
@@ -54,11 +54,12 @@
             display: none; 
         }
 
-        /* Presentation Container - Horizontal Scroll */
+        /* Presentation Container - Horizontal Scroll Desktop */
         .deck-container {
             display: flex;
             width: 100vw;
             height: 100vh;
+            height: 100dvh;
             overflow-x: auto;
             overflow-y: hidden;
             scroll-snap-type: x mandatory;
@@ -69,6 +70,7 @@
             flex: 0 0 100vw;
             width: 100vw;
             height: 100vh;
+            height: 100dvh;
             scroll-snap-align: start;
             position: relative;
             display: flex;
@@ -165,6 +167,20 @@
             transform: translateY(30px);
             opacity: 0;
             transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+            max-height: 90vh; /* for safety */
+            overflow-y: auto; /* allows scrolling inside box if content is huge */
+        }
+
+        /* Hide scrollbars inside content box */
+        .content-box::-webkit-scrollbar {
+            width: 6px;
+        }
+        .content-box::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .content-box::-webkit-scrollbar-thumb {
+            background: rgba(0,0,0,0.1);
+            border-radius: 10px;
         }
 
         .slide.active .content-box {
@@ -176,6 +192,9 @@
             background: var(--glass-bg-dark);
             color: var(--white);
             border-color: rgba(255, 255, 255, 0.1);
+        }
+        .content-box.dark::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.2);
         }
 
         /* Typography Styles */
@@ -225,6 +244,12 @@
             margin-bottom: 2rem;
         }
 
+        .nights-badge-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
         .nights-badge {
             position: absolute;
             top: 3rem;
@@ -242,6 +267,7 @@
             font-size: 1.8rem;
             box-shadow: 0 8px 20px rgba(56, 178, 172, 0.4);
             line-height: 1;
+            z-index: 10;
         }
         .nights-badge span {
             font-size: 0.75rem;
@@ -264,6 +290,12 @@
             gap: 1.5rem;
             margin-top: 2rem;
         }
+        
+        .grid-2-inner {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
 
         /* Cards & Info Blocks */
         .info-card {
@@ -278,7 +310,6 @@
             border-color: rgba(255, 255, 255, 0.1);
         }
         .info-card:hover {
-            transform: translateY(-5px);
             background: var(--white);
             box-shadow: var(--shadow-premium);
         }
@@ -312,7 +343,7 @@
             line-height: 1.5;
             color: var(--gray-text);
         }
-        .content-box.dark .plan-list li { color: rgba(255, 255, 255, 0.8); }
+        .content-box.dark .plan-list li { color: rgba(255, 255, 255, 0.9); }
 
         .plan-list li::before {
             content: '•';
@@ -329,7 +360,6 @@
         }
         .content-box.dark .plan-list li strong { color: var(--white); }
 
-        /* Sub-items in plan list */
         .plan-list li ul {
             list-style: none;
             margin-top: 0.3rem;
@@ -347,7 +377,7 @@
         /* Map Slide specific */
         .map-container {
             width: 100%;
-            height: 60vh;
+            height: 45vh;
             border-radius: 20px;
             overflow: hidden;
             position: relative;
@@ -462,17 +492,81 @@
             font-weight: 600;
         }
 
+        /* MOBILE RESPONSIVE FIXES */
+        @media (max-width: 991px) {
+            .deck-container {
+                /* Switch scrolling direction to vertical for mobile */
+                flex-direction: column;
+                overflow-x: hidden;
+                overflow-y: auto;
+                scroll-snap-type: y mandatory;
+            }
+            .slide {
+                flex: none;
+                width: 100vw;
+                height: 100vh;
+                height: 100dvh;
+                padding: 1rem;
+                padding-top: 3rem;
+            }
+            .content-box {
+                padding: 1.5rem;
+                border-radius: 20px;
+                max-height: 85vh; /* leave room so it doesn't get clipped by mobile bars */
+                box-shadow: 0 5px 25px rgba(0,0,0,0.2);
+            }
+            .bg-overlay-dark { background: rgba(10, 28, 46, 0.7); }
+            
+            /* Typography shrink */
+            .title-hero { font-size: 3.5rem; }
+            .subtitle-hero { font-size: 1.1rem; margin-bottom: 1.5rem; }
+            h2.section-title { font-size: 2.2rem; }
+            
+            /* Fix badges overlaying text */
+            .nights-badge {
+                position: relative;
+                top: 0; right: 0;
+                width: 60px; height: 60px;
+                font-size: 1.2rem;
+                margin-left: auto;
+                margin-top: -1rem;
+                margin-bottom: 1rem;
+            }
+            .nights-badge span { font-size: 0.6rem; }
+            
+            /* Grids to 1 Column */
+            .grid-layout, .grid-3, .grid-2-inner {
+                grid-template-columns: 1fr !important;
+                gap: 1.2rem;
+            }
+            
+            .summary-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 1rem;
+                margin: 1.5rem 0;
+            }
+            
+            .grand-total { font-size: 1.8rem; margin-top: 0.5rem; }
+            
+            .info-card { padding: 1.2rem; }
+            .info-card h4 { font-size: 1.2rem; }
+            
+            /* Hide nav buttons, users scroll down on mobile */
+            .nav-controls { display: none; }
+            
+            .map-container { height: 35vh; }
+        }
     </style>
 </head>
 <body>
 
-    <!-- Controles de navegación fijos -->
+    <!-- Controles de navegación fijos (Desktop) -->
     <div class="nav-controls">
         <button class="nav-btn" onclick="prevSlide()"><i class="uil uil-angle-left-b"></i></button>
         <button class="nav-btn" onclick="nextSlide()"><i class="uil uil-angle-right-b"></i></button>
     </div>
 
-    <!-- Contenedor Principal (Horizontal Scroll) -->
+    <!-- Contenedor Principal -->
     <div class="deck-container" id="deck">
 
         <!-- DIAPOSITIVA 1: PORTADA -->
@@ -483,7 +577,7 @@
             <div class="content-box dark" style="background: transparent; border: none; box-shadow: none; text-align: center;">
                 <div class="subtitle-hero" style="border: none; padding: 0;">Itinerario Familiar por el Sudeste Asiático</div>
                 <h1 class="title-hero">Viaje Sudeste Pollos</h1>
-                <div class="dates-badge" style="font-size: 1.2rem; padding: 0.6rem 2rem; margin-top: 2rem; background: var(--turquoise); color: var(--deep-blue);">
+                <div class="dates-badge" style="font-size: 1.1rem; padding: 0.6rem 2rem; margin-top: 2rem; background: var(--turquoise); color: var(--deep-blue);">
                     21 de junio – 13 de julio
                 </div>
             </div>
@@ -499,13 +593,12 @@
                 
                 <div class="grid-layout">
                     <div class="map-container">
-                        <!-- Imagen local proporcionada -->
                         <img src="mapa Sudeste.png" alt="Mapa del Sudeste" class="map-img" onerror="this.src='https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&w=1000&q=80'">
                     </div>
                     
                     <div class="map-info">
-                        <p style="font-size: 1.1rem; color: var(--gray-text); margin-bottom: 2rem;">
-                            Un trayecto diseñado paso a paso para fluir con tranquilidad, equilibrando aventura, cultura y el descanso en familia. Múltiples destinos optimizados.
+                        <p style="font-size: 1.1rem; color: var(--gray-text); margin-bottom: 1.5rem;">
+                            Un trayecto diseñado para fluir con tranquilidad, equilibrando la aventura familiar con el descanso.
                         </p>
                         
                         <div class="map-route-list">
@@ -544,14 +637,14 @@
                                     <li>Buda de Oro</li>
                                 </ul>
                             </li>
-                            <li><strong>24:</strong> Mercado flotante + paseo río</li>
+                            <li><strong>24:</strong> Mercado flotante + río</li>
                         </ul>
                     </div>
                     
                     <div class="info-card">
                         <h4><i class="uil uil-building"></i> Dónde Alojar</h4>
                         <ul class="plan-list">
-                            <li><strong>Zona:</strong> Riverside (mejor para familia)</li>
+                            <li><strong>Zona:</strong> Riverside</li>
                             <li>Anantara Riverside</li>
                             <li>Shangri-La</li>
                         </ul>
@@ -564,11 +657,10 @@
                     </div>
 
                     <div class="info-card">
-                        <h4><i class="uil uil-lightbulb-alt"></i> Tips Relevantes</h4>
+                        <h4><i class="uil uil-lightbulb-alt"></i> Tips</h4>
                         <div style="margin-top: 1rem;">
-                            <span class="tip-tag">Salir temprano (calor fuerte)</span>
+                            <span class="tip-tag">Salir temprano</span>
                             <span class="tip-tag">Tardes indoor</span>
-                            <span class="tip-tag">Mucha hidratación</span>
                         </div>
                     </div>
                 </div>
@@ -589,8 +681,8 @@
                     <div class="info-card">
                         <h4><i class="uil uil-plane-departure"></i> El Plan</h4>
                         <ul class="plan-list">
-                            <li>Vuelo BKK → Chiang Rai (14:35)</li>
-                            <li><strong>25:</strong> Llegada → hotel → descanso</li>
+                            <li>Vuelo BKK → Chiang Rai</li>
+                            <li><strong>25:</strong> Llegada → descanso</li>
                             <li><strong>26:</strong> Día templos
                                 <ul>
                                     <li>White Temple</li>
@@ -598,28 +690,28 @@
                                     <li>Black House</li>
                                 </ul>
                             </li>
-                            <li><strong>27:</strong> Salida a próximo destino</li>
+                            <li><strong>27:</strong> Salida a Phuket</li>
                         </ul>
                     </div>
                     
                     <div class="info-card">
-                        <h4><i class="uil uil-building"></i> Hoteles Sugeridos</h4>
+                        <h4><i class="uil uil-building"></i> Hoteles</h4>
                         <ul class="plan-list">
                             <li>Le Méridien</li>
                             <li>The Riverie</li>
                         </ul>
                         <div class="divider"></div>
-                        <h4><i class="uil uil-utensils"></i> Lugar para Comer</h4>
+                        <h4><i class="uil uil-utensils"></i> Comer</h4>
                         <ul class="plan-list">
                             <li>Chivit Thamma Da</li>
                         </ul>
                     </div>
 
                     <div class="info-card">
-                        <h4><i class="uil uil-lightbulb-alt"></i> Consideraciones</h4>
+                        <h4><i class="uil uil-lightbulb-alt"></i> Tips</h4>
                         <div style="margin-top: 1rem;">
                             <span class="tip-tag">Todo en medio día</span>
-                            <span class="tip-tag">Tarde libre de descanso</span>
+                            <span class="tip-tag">Tarde libre</span>
                         </div>
                     </div>
                 </div>
@@ -633,38 +725,31 @@
             
             <div class="content-box dark">
                 <div class="nights-badge pulse">4<span>Noches</span></div>
-                <div class="dates-badge" style="background: linear-gradient(45deg, var(--turquoise), #2b6cb0);">Momento Cumbre del Viaje</div>
                 <h2 class="section-title" style="color: var(--turquoise);">Phuket</h2>
-                <div class="dates-badge" style="background: transparent; border: none; padding: 0; font-size: 1.1rem; letter-spacing: 0;">27 Junio – 1 Julio</div>
+                <div class="dates-badge" style="background: transparent; border: 1px solid var(--turquoise); color: var(--turquoise);">27 Junio – 1 Julio</div>
 
                 <div class="grid-3">
                     <div class="info-card" style="background: rgba(56, 178, 172, 0.1); border-color: rgba(56, 178, 172, 0.4);">
-                        <h4><i class="uil uil-sun"></i> El Plan Diario</h4>
+                        <h4><i class="uil uil-sun"></i> El Plan</h4>
                         <ul class="plan-list">
-                            <li><strong>27:</strong> Llegada → hotel → descanso</li>
-                            <li><strong>28:</strong> Tour Premium a Phi Phi Islands</li>
-                            <li><strong>29:</strong> Santuario de elefantes
-                                <ul>
-                                    <li>Elephant Jungle Sanctuary</li>
-                                    <li>Interacción ética (mañana)</li>
-                                    <li>Tarde: Piscina + masaje</li>
-                                </ul>
-                            </li>
-                            <li><strong>30:</strong> Día libre (Playa, descanso)</li>
-                            <li><strong>1 Jul:</strong> Salida a Krabi</li>
+                            <li><strong>27:</strong> Llegada → descanso</li>
+                            <li><strong>28:</strong> Tour Phi Phi Islands</li>
+                            <li><strong>29:</strong> Santuario Elefantes (mañana). Tarde: Masaje</li>
+                            <li><strong>30:</strong> Libre (Playa)</li>
+                            <li><strong>1 Jul:</strong> Hacia Krabi</li>
                         </ul>
                     </div>
                     
                     <div class="info-card">
-                        <h4><i class="uil uil-building"></i> Dónde Alojar</h4>
+                        <h4><i class="uil uil-building"></i> Alojar</h4>
                         <ul class="plan-list">
-                            <li><strong>Zonas:</strong> Kata / Kamala</li>
+                            <li>Zonas: Kata / Kamala</li>
                             <li><strong style="color: #ef4444;">NO Patong</strong></li>
                             <li>Katathani Beach Resort</li>
                             <li>Rosewood</li>
                         </ul>
                         <div class="divider" style="background: rgba(255,255,255,0.2);"></div>
-                        <h4><i class="uil uil-utensils"></i> Dónde Comer</h4>
+                        <h4><i class="uil uil-utensils"></i> Comer</h4>
                         <ul class="plan-list">
                             <li>The Boathouse</li>
                             <li>Restaurantes del hotel</li>
@@ -676,7 +761,6 @@
                         <div style="margin-top: 1rem;">
                             <span class="tip-tag" style="background: var(--turquoise); color: var(--deep-blue);">Tour Phi Phi premium</span>
                             <span class="tip-tag">No sobrecargar</span>
-                            <span class="tip-tag">Desconexión familiar</span>
                         </div>
                     </div>
                 </div>
@@ -697,31 +781,31 @@
                     <div class="info-card">
                         <h4><i class="uil uil-ship"></i> El Plan</h4>
                         <ul class="plan-list">
-                            <li><strong>1:</strong> Llegada desde Phuket</li>
+                            <li><strong>1:</strong> Llegada de Phuket</li>
                             <li><strong>2:</strong> Railay Beach</li>
-                            <li><strong>3:</strong> Día libre (Relax absoluto)</li>
-                            <li><strong>4:</strong> Salida al próximo destino</li>
+                            <li><strong>3:</strong> Día libre (Relax)</li>
+                            <li><strong>4:</strong> Salida a Bali</li>
                         </ul>
                     </div>
                     
                     <div class="info-card">
-                        <h4><i class="uil uil-building"></i> Hoteles Sugeridos</h4>
+                        <h4><i class="uil uil-building"></i> Hoteles</h4>
                         <ul class="plan-list">
                             <li>Rayavadee</li>
                             <li>Sofitel Krabi</li>
                         </ul>
                         <div class="divider"></div>
-                        <h4><i class="uil uil-utensils"></i> Dónde Comer</h4>
+                        <h4><i class="uil uil-utensils"></i> Comer</h4>
                         <ul class="plan-list">
                             <li>Lae Lay Grill</li>
                         </ul>
                     </div>
 
                     <div class="info-card">
-                        <h4><i class="uil uil-bed-double"></i> Enfoque del Destino</h4>
+                        <h4><i class="uil uil-bed-double"></i> Tips</h4>
                         <div style="margin-top: 1rem;">
                             <span class="tip-tag">Ritmo tranquilo</span>
-                            <span class="tip-tag">Ideal para descanso puro</span>
+                            <span class="tip-tag">Descanso puro</span>
                         </div>
                     </div>
                 </div>
@@ -733,18 +817,18 @@
             <img src="https://images.unsplash.com/photo-1555400038-63f5ba517a47?auto=format&fit=crop&w=2000&q=80" alt="Bali" class="bg-image">
             <div class="bg-overlay-dark"></div>
             
-            <div class="content-box dark" style="max-width: 1200px;">
-                <div class="nights-badge" style="background: var(--tropical-green); color: white;">6<span>Noches Totales</span></div>
+            <div class="content-box dark">
+                <div class="nights-badge" style="background: var(--tropical-green); color: white;">6<span>Total</span></div>
                 <h2 class="section-title">Bali</h2>
                 <div class="dates-badge" style="background: transparent; border: 1px solid white;">4 – 10 Julio</div>
 
-                <div class="grid-layout" style="gap: 2rem;">
+                <div class="grid-layout">
                     <!-- Bloque Ubud -->
                     <div class="info-card" style="border: 1px solid rgba(56, 178, 172, 0.4);">
-                        <h3 style="font-size: 1.8rem; color: var(--turquoise); margin-bottom: 1rem;">Ubud | Cultural & Verde</h3>
+                        <h3 style="font-size: 1.5rem; color: var(--turquoise); margin-bottom: 1rem;">Ubud | Cultural</h3>
                         <p style="color: rgba(255,255,255,0.7); margin-bottom: 1rem; font-size: 0.9rem;">4 – 7 Julio (3 noches)</p>
                         
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="grid-2-inner">
                             <div>
                                 <h4 style="font-size: 1.1rem;"><i class="uil uil-trees"></i> Plan</h4>
                                 <ul class="plan-list" style="font-size: 0.9rem;">
@@ -765,21 +849,18 @@
 
                     <!-- Bloque Playa -->
                     <div class="info-card" style="border: 1px solid rgba(255, 255, 255, 0.2);">
-                        <h3 style="font-size: 1.8rem; color: var(--white); margin-bottom: 1rem;">Nusa Dua | Playa Familia</h3>
+                        <h3 style="font-size: 1.5rem; color: var(--white); margin-bottom: 1rem;">Nusa Dua | Playa</h3>
                         <p style="color: rgba(255,255,255,0.7); margin-bottom: 1rem; font-size: 0.9rem;">7 – 10 Julio (3 noches)</p>
                         
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="grid-2-inner">
                             <div>
                                 <h4 style="font-size: 1.1rem;"><i class="uil uil-swimmer"></i> Plan</h4>
                                 <ul class="plan-list" style="font-size: 0.9rem;">
-                                    <li>Playa</li>
-                                    <li>Piscina</li>
-                                    <li>Hotel</li>
+                                    <li>Playa / Piscina</li>
                                 </ul>
                                 <h4 style="font-size: 1.1rem; margin-top: 1rem;"><i class="uil uil-utensils"></i> Comer</h4>
                                 <ul class="plan-list" style="font-size: 0.9rem;">
-                                    <li>En el hotel</li>
-                                    <li>Bebek Tepi Sawah</li>
+                                    <li>Hotel / Bebek Tepi</li>
                                 </ul>
                             </div>
                             <div>
@@ -791,11 +872,6 @@
                             </div>
                         </div>
                     </div>
-                </div>
-                
-                <div style="text-align: center; margin-top: 2rem;">
-                    <span class="tip-tag" style="background: var(--turquoise); color: var(--deep-blue); font-size: 1rem;">Bali = Relajo</span>
-                    <span class="tip-tag" style="font-size: 1rem;">No sobreplanificar</span>
                 </div>
             </div>
         </section>
@@ -812,34 +888,26 @@
 
                 <div class="grid-3">
                     <div class="info-card">
-                        <h4><i class="uil uil-plane-arrival"></i> El Plan de Cierre</h4>
+                        <h4><i class="uil uil-plane-arrival"></i> El Plan</h4>
                         <ul class="plan-list">
-                            <li><strong>11:</strong> Llegada desde Bali</li>
-                            <li><strong>12:</strong> Compras + descanso final</li>
-                            <li><strong>13:</strong> Vuelo de retorno a casa</li>
+                            <li><strong>11:</strong> Llegada de Bali</li>
+                            <li><strong>12:</strong> Compras + descanso</li>
+                            <li><strong>13:</strong> Vuelo a casa</li>
                         </ul>
                     </div>
                     
                     <div class="info-card">
-                        <h4><i class="uil uil-building"></i> Dónde Alojar</h4>
+                        <h4><i class="uil uil-shopping-bag"></i> Logística</h4>
                         <ul class="plan-list">
-                            <li>Repetir zona Riverside</li>
-                            <li>Ideal para logística de salida</li>
-                        </ul>
-                        <div class="divider"></div>
-                        <h4><i class="uil uil-shopping-bag"></i> Dónde Comer & Shopping</h4>
-                        <ul class="plan-list">
-                            <li>IconSiam</li>
-                            <li>Siam Paragon</li>
+                            <li>Alojamiento: Riverside</li>
+                            <li>Shopping: IconSiam, Siam Paragon</li>
                         </ul>
                     </div>
 
-                    <div class="info-card" style="display: flex; align-items: center; justify-content: center; text-align: center; background: rgba(56, 178, 172, 0.1);">
-                        <div>
-                            <i class="uil uil-smile" style="font-size: 3rem; color: var(--tropical-green);"></i>
-                            <h4 style="justify-content: center; margin-top: 1rem; color: var(--deep-blue);">Despedida Cómoda</h4>
-                            <p style="color: var(--gray-text); font-size: 0.95rem; margin-top: 0.5rem;">Cierre de viaje, enfoque en comodidad y últimas compras antes del vuelo.</p>
-                        </div>
+                    <div class="info-card" style="background: rgba(56, 178, 172, 0.1); text-align:center;">
+                        <i class="uil uil-smile" style="font-size: 2.5rem; color: var(--tropical-green);"></i>
+                        <h4 style="justify-content: center; margin-top: 0.5rem;">Cierre Ideal</h4>
+                        <p style="color: var(--gray-text); font-size: 0.9rem;">Comodidad y últimas compras antes del vuelo.</p>
                     </div>
                 </div>
             </div>
@@ -850,45 +918,26 @@
             <img src="https://images.unsplash.com/photo-1505993597083-3cb43160a2b9?auto=format&fit=crop&w=2000&q=80" alt="Resumen" class="bg-image">
             <div class="bg-overlay-dark"></div>
             
-            <div class="content-box dark" style="text-align: center; max-width: 900px;">
-                <h2 class="section-title" style="font-size: 3rem; margin-bottom: 0;">Resumen del Viaje</h2>
-                <div class="subtitle-hero" style="border: none; margin-bottom: 0; margin-top: 1rem;">La distribución perfecta</div>
-
+            <div class="content-box dark" style="text-align: center;">
+                <h2 class="section-title" style="font-size: 2.5rem; margin-bottom: 0;">Resumen del Viaje</h2>
+                
                 <div class="summary-grid">
-                    <div class="summary-card">
-                        <h5>Bangkok</h5>
-                        <p>4 Noches</p>
-                    </div>
-                    <div class="summary-card">
-                        <h5>Chiang Rai</h5>
-                        <p>2 Noches</p>
-                    </div>
-                    <div class="summary-card">
-                        <h5>Phuket</h5>
-                        <p>4 Noches</p>
-                    </div>
-                    <div class="summary-card">
-                        <h5>Krabi</h5>
-                        <p>3 Noches</p>
-                    </div>
-                    <div class="summary-card" style="border: 2px solid var(--turquoise);">
-                        <h5>Bali</h5>
-                        <p>6 Noches</p>
-                    </div>
-                    <div class="summary-card">
-                        <h5>Bangkok Final</h5>
-                        <p>2 Noches</p>
-                    </div>
+                    <div class="summary-card"><h5>Bangkok</h5><p>4</p></div>
+                    <div class="summary-card"><h5>Chiang Rai</h5><p>2</p></div>
+                    <div class="summary-card"><h5>Phuket</h5><p>4</p></div>
+                    <div class="summary-card"><h5>Krabi</h5><p>3</p></div>
+                    <div class="summary-card" style="border: 2px solid var(--turquoise);"><h5>Bali</h5><p>6</p></div>
+                    <div class="summary-card"><h5>BKK Final</h5><p>2</p></div>
                 </div>
 
-                <h3 class="grand-total">22 días perfectamente equilibrados</h3>
-                <p style="color: rgba(255,255,255,0.7); margin-top: 1rem; font-family: var(--font-text);">Una experiencia familiar inolvidable en el sudeste asiático.</p>
+                <h3 class="grand-total" style="color: var(--turquoise);">22 días perfectamente equilibrados</h3>
+                <p style="color: rgba(255,255,255,0.7); margin-top: 1rem;">Una experiencia familiar inolvidable.</p>
             </div>
         </section>
 
     </div>
 
-    <!-- Script para navegación con botones y keyboard -->
+    <!-- Script de navegación -->
     <script>
         const deck = document.getElementById('deck');
         const slides = document.querySelectorAll('.slide');
@@ -896,15 +945,11 @@
 
         function updateActiveSlide() {
             slides.forEach((slide, index) => {
-                if (index === currentSlide) {
-                    slide.classList.add('active');
-                } else {
-                    slide.classList.remove('active');
-                }
+                if (index === currentSlide) slide.classList.add('active');
+                else slide.classList.remove('active');
             });
         }
 
-        // Navegación con botones
         function nextSlide() {
             if (currentSlide < slides.length - 1) {
                 currentSlide++;
@@ -921,7 +966,6 @@
             }
         }
 
-        // Navegación interactiva (observer)
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
@@ -930,23 +974,15 @@
                     updateActiveSlide();
                 }
             });
-        }, {
-            root: deck,
-            threshold: 0.6 // Dispara cuando el 60% del slide es visible
-        });
+        }, { root: deck, threshold: 0.4 });
 
         slides.forEach(slide => observer.observe(slide));
 
-        // Keyboard Navigation (Flechas izquierda / derecha)
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'ArrowRight') {
-                nextSlide();
-            } else if (e.key === 'ArrowLeft') {
-                prevSlide();
-            }
+            if (e.key === 'ArrowRight' || e.key === 'ArrowDown') nextSlide();
+            else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') prevSlide();
         });
 
-        // Initialize first slide as active
         updateActiveSlide();
     </script>
 </body>
